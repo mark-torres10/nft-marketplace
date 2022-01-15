@@ -6,7 +6,6 @@ const createAndDeployContract = async() => {
     const nftContract = await nftContractFactory.deploy();
     await nftContract.deployed();
     console.log(`Contract deployed to: ${nftContract.address}`);
-    console.log(`Contract properties: ${Object.getOwnPropertyNames(nftContract)}`);
     return nftContract;
 }
 
@@ -23,6 +22,7 @@ const mintNFT = async(contract) => {
 const main = async() => {
     const nftContract = await createAndDeployContract();
     await mintNFT(nftContract);
+    console.log(`NFT minted at ${nftContract.address}`);
 }
 
 const runMain = async () => {

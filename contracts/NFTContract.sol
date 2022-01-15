@@ -11,7 +11,7 @@ import { Base64 } from "./libraries/Base64.sol";
 
 /// @author Mark Torres
 /// @title A simple first NFT Contract
-contract NFTContract is ERC721URIStorage {
+contract NFTContract2 is ERC721URIStorage {
     
     /// store IDs
     using Counters for Counters.Counter;
