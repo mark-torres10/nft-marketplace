@@ -12,7 +12,6 @@ import { Base64 } from "./libraries/Base64.sol";
 /// @author Mark Torres
 /// @title A simple first NFT Contract
 contract NFTContract is ERC721URIStorage {
-    
     /// store IDs
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -23,6 +22,8 @@ contract NFTContract is ERC721URIStorage {
     string[] firstWords = ["quadrigenarious", "alecost", "moya", "versicular", "articulate", "carnivorous", "deciduous", "tertiary", "elememntary", "quantum"];
     string[] secondWords = ["sorcerer", "scholar", "academic", "monk", "architect","dwarf", "marksmen", "assailant", "marquis", "swordsmith", "viscount"];
     string[] thirdWords = ["supreme", "overlord", "mage", "defender", "mercenary", "marksmen", "braveheart", "protector"];
+
+    event NewNFTMinted(address sender, uint256 tokenId);
 
     constructor() ERC721 ("SquareNFT", "SQUARE") {
         console.log("This is an NFT contract.");
@@ -47,6 +48,7 @@ contract NFTContract is ERC721URIStorage {
         console.log("Using the following words: %s, %s, %s", firstWord, secondWord, thirdWord);
         string memory combinedWord = string(abi.encodePacked(firstWord, secondWord, thirdWord));
 
+        
         // join with base SVG
         string memory fullSVG = string(abi.encodePacked(baseSVG, combinedWord, "</text></svg>"));
 
@@ -60,10 +62,8 @@ contract NFTContract is ERC721URIStorage {
                 string(
                     abi.encodePacked(
                         '{"name": "',
-                        // We set the title of our NFT as the generated word.
                         combinedWord,
                         '", "description": "A highly acclaimed collection of squares.", "image": "data:image/svg+xml;base64,',
-                        // We add data:image/svg+xml;base64 and then append our base64 encode our svg.
                         Base64.encode(bytes(fullSVG)),
                         '"}'
                     )
@@ -71,7 +71,7 @@ contract NFTContract is ERC721URIStorage {
             )
         );
 
-        string memory finalTokenURI = string(
+        string memory finalTokenUri = string(
             abi.encodePacked("data:application/json;base64,", json)
         );
 
@@ -79,11 +79,14 @@ contract NFTContract is ERC721URIStorage {
         _safeMint(msg.sender, newItemId);
 
         /// @dev set the NFTs data.
-        _setTokenURI(newItemId, finalTokenURI);
+        _setTokenURI(newItemId, finalTokenUri);
 
         console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
 
         /// @dev increment counter for when the next NFT is minted.
         _tokenIds.increment();
+
+        // emit information about NFT minting
+        emit NewNFTMinted(msg.sender, newItemId);
     }
 }
