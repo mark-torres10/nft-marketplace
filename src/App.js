@@ -1,12 +1,14 @@
+import { ethers } from "ethers";
+import React, { useEffect, useState } from "react";
+import NFTContract from './utils/NFTContract.json';
 import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
-import React, { useEffect, useState } from "react";
-
 // Constants
 const TWITTER_HANDLE = '_buildspace';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const OPENSEA_LINK = '';
 const TOTAL_MINT_COUNT = 50;
+const CONTRACT_ADDRESS = "0xF52Cb9634D27BF4fAE2Da013a9BAFc32673685de";
 
 const App = () => {
 
@@ -64,6 +66,35 @@ const App = () => {
     }
   }
 
+  const askContractToMintNft = async () => {
+    /*
+    Connect to existing contract and ask to mint NFT
+    */
+
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        // connect to contract
+        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, NFTContract.abi, signer);
+
+        console.log("Going to pop wallet now to pay gas...")
+        let nftTxn = await connectedContract.makeNFT();
+
+        console.log("Mining...please wait.")
+        await nftTxn.wait();
+
+        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (err) {
+      console.log(`Unable to mint NFT: ${err}`);
+    }
+  }
+
   // Render Methods
   const renderNotConnectedContainer = () => (
     <button className="cta-button connect-wallet-button">
@@ -86,7 +117,7 @@ const App = () => {
           {currentAccount === "" ? (
             renderNotConnectedContainer()
           ) : (
-            <button onClick={null} className="cta-button connect-wallet-button">
+            <button onClick={askContractToMintNft} className="cta-button connect-wallet-button">
               Mint NFT
             </button>
           )}

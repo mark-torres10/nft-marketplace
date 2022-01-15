@@ -11,7 +11,7 @@ import { Base64 } from "./libraries/Base64.sol";
 
 /// @author Mark Torres
 /// @title A simple first NFT Contract
-contract NFTContract2 is ERC721URIStorage {
+contract NFTContract is ERC721URIStorage {
     
     /// store IDs
     using Counters for Counters.Counter;
@@ -44,6 +44,7 @@ contract NFTContract2 is ERC721URIStorage {
         string memory secondWord = pickRandomWordFromList(newItemId, secondWords);
         string memory thirdWord = pickRandomWordFromList(newItemId, thirdWords);
 
+        console.log("Using the following words: %s, %s, %s", firstWord, secondWord, thirdWord);
         string memory combinedWord = string(abi.encodePacked(firstWord, secondWord, thirdWord));
 
         // join with base SVG
